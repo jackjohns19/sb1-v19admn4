@@ -31,4 +31,14 @@ export const getFileContent = async (filename: string): Promise<string> => {
   }
   const data = await response.json();
   return data.content;
+};
+
+export const deleteFile = async (filename: string): Promise<void> => {
+  const response = await fetch(`${API_BASE_URL}/files/${filename}`, {
+    method: 'DELETE',
+  });
+  
+  if (!response.ok) {
+    throw new Error('Failed to delete file');
+  }
 }; 

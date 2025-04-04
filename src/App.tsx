@@ -50,6 +50,10 @@ function App() {
     }
   };
 
+  const handleFileDelete = (filename: string) => {
+    setFiles(files => files.filter(file => file.name !== filename));
+  };
+
   if (selectedFile) {
     return <FileViewer file={selectedFile} onBack={() => setSelectedFile(null)} />;
   }
@@ -72,7 +76,11 @@ function App() {
           <FileUpload onUpload={handleFileUpload} />
         </div>
 
-        <FileGrid files={files} onFileSelect={setSelectedFile} />
+        <FileGrid 
+          files={files} 
+          onFileSelect={setSelectedFile} 
+          onFileDelete={handleFileDelete}
+        />
 
         <Settings
           isOpen={isSettingsOpen}

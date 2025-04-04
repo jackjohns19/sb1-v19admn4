@@ -60,6 +60,17 @@ app.get('/api/files/:filename', (req, res) => {
   });
 });
 
+// Endpoint to delete a file
+app.delete('/api/files/:filename', (req, res) => {
+  const filePath = path.join(__dirname, '../uploads', req.params.filename);
+  fs.unlink(filePath, (err) => {
+    if (err) {
+      return res.status(404).json({ error: 'File not found or could not be deleted' });
+    }
+    res.json({ message: 'File deleted successfully' });
+  });
+});
+
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 }); 
