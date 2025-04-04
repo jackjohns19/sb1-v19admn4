@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Settings as SettingsIcon } from 'lucide-react';
 import { FileUpload } from './components/FileUpload';
 import { FileGrid } from './components/FileGrid';
 import { Settings } from './components/Settings';
 import { FileViewer } from './components/FileViewer';
 import { HTMLFile, Settings as SettingsType } from './types';
+import { uploadFile, getFiles, getFileContent } from './services/api';
 
 function App() {
   const [files, setFiles] = useState<HTMLFile[]>([]);
@@ -14,23 +15,39 @@ function App() {
   });
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
-  const handleFileUpload = async (uploadedFiles: File[]) => {
-    const newFiles = await Promise.all(
-      uploadedFiles.map(async (file) => {
-        const content = await file.text();
-        const preview = URL.createObjectURL(file);
-        
+  useEffect(() => {
+    loadFiles();
+  }, []);
+
+  const loadFiles = async () => {
+    try {
+      const fileNames = await getFiles();
+      const filePromises = fileNames.map(async (filename) => {
+        const content = await getFileContent(filename);
         return {
           id: crypto.randomUUID(),
-          name: file.name,
+          name: filename,
           content,
-          preview,
-          lastModified: file.lastModified
+          lastModified: Date.now(),
+          preview: `http://localhost:3001/api/files/${filename}`
         };
-      })
-    );
+      });
+      const loadedFiles = await Promise.all(filePromises);
+      setFiles(loadedFiles);
+    } catch (error) {
+      console.error('Error loading files:', error);
+    }
+  };
 
-    setFiles((prev) => [...prev, ...newFiles]);
+  const handleFileUpload = async (uploadedFiles: File[]) => {
+    try {
+      for (const file of uploadedFiles) {
+        await uploadFile(file);
+      }
+      await loadFiles();
+    } catch (error) {
+      console.error('Error uploading files:', error);
+    }
   };
 
   if (selectedFile) {
