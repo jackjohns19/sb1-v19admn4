@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:3001/api';
+const API_BASE_URL = 'http://192.168.0.180:3001/api';
 
 export const uploadFile = async (file: File): Promise<{ filename: string }> => {
   const formData = new FormData();

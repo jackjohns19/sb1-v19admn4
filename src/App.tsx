@@ -6,6 +6,8 @@ import { Settings } from './components/Settings';
 import { FileViewer } from './components/FileViewer';
 import { HTMLFile, Settings as SettingsType } from './types';
 import { uploadFile, getFiles, getFileContent } from './services/api';
+import { v4 as uuidv4 } from 'uuid';
+
 
 function App() {
   const [files, setFiles] = useState<HTMLFile[]>([]);
@@ -25,11 +27,11 @@ function App() {
       const filePromises = fileNames.map(async (filename) => {
         const content = await getFileContent(filename);
         return {
-          id: crypto.randomUUID(),
+          id: uuidv4(), //crypto.randomUUID(),
           name: filename,
           content,
           lastModified: Date.now(),
-          preview: `http://localhost:3001/api/files/${filename}`
+          preview: `http://192.168.0.180:3001/api/files/${filename}`
         };
       });
       const loadedFiles = await Promise.all(filePromises);

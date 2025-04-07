@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 
 const app = express();
+const host = '192.168.0.180';
 const port = 3001;
 
 // Configure CORS
@@ -71,6 +72,6 @@ app.delete('/api/files/:filename', (req, res) => {
   });
 });
 
-app.listen(port, () => {
+app.listen(port, host, () => {
   console.log(`Server running on port ${port}`);
 }); 
